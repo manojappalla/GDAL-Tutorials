@@ -36,5 +36,5 @@ def get_raster_info(
     # Close the dataset
     dataset = None
 
-# Test
+# Test..
 get_raster_info("../data/raster/fcc.tif")
