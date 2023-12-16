@@ -4,6 +4,14 @@ from osgeo import gdal, osr
 
 
 class GDALUtilities:
+    """
+    This class has the following capabilities
+
+    1. Get raster info
+    2. Read image band as an array
+    3. Reproject a raster
+    """
+    
     def __init__(self, path):
         self.path = path
 
