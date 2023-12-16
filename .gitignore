@@ -1,3 +1,5 @@
 .DS_STORE
-data/
+data/raster/
+data/vector/
 .vscode/
+gdal_tutorials/__pycache__/

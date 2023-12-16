@@ -3,31 +3,30 @@ import sys
 from osgeo import gdal, osr
 
 
-class GDAL:
+class GDALUtilities:
     def __init__(self, path):
         self.path = path
-        self.dataset = gdal.Open(path)
 
     def get_raster_info(self):
-        dataset = gdal.Open(self.path, gdal.GA_ReadOnly)
+        self.dataset = gdal.Open(self.path, gdal.GA_ReadOnly)
         print(
             "Driver: {}/{}\n".format(
-                dataset.GetDriver().ShortName, dataset.GetDriver().LongName
+                self.dataset.GetDriver().ShortName, self.dataset.GetDriver().LongName
             )
         )
         print(
             "Size is {} x {} x {}\n".format(
-                dataset.RasterXSize, dataset.RasterYSize, dataset.RasterCount
+                self.dataset.RasterXSize, self.dataset.RasterYSize, self.dataset.RasterCount
             )
         )
-        print("Projection is {}\n".format(dataset.GetProjection()))
-        geotransform = dataset.GetGeoTransform()
+        print("Projection is {}\n".format(self.dataset.GetProjection()))
+        geotransform = self.dataset.GetGeoTransform()
         if geotransform:
             print("Origin = ({}, {})\n".format(geotransform[0], geotransform[3]))
             print("Pixel Size = ({}, {})\n".format(geotransform[1], geotransform[5]))
-        band_count = dataset.RasterCount
+        band_count = self.dataset.RasterCount
         for i in range(1, band_count + 1):
-            band = dataset.GetRasterBand(i)
+            band = self.dataset.GetRasterBand(i)
             band_name = band.GetDescription()
             if band_name:
                 print(f"Band {i} Name: {band_name}")
@@ -36,16 +35,17 @@ class GDAL:
         dataset = None
 
     def read_image(self, band: int = None):
-        dataset = gdal.Open(self.path, gdal.GA_ReadOnly)
-        band = dataset.GetRasterBand(band)
+        self.dataset = gdal.Open(self.path, gdal.GA_ReadOnly)
+        band = self.dataset.GetRasterBand(band)
         data = band.ReadAsArray()
-        dataset = None
+        self.dataset = None
         return data
     
     def reproject(
     self, output_path: str = None, target_crs: str = None  # EPSG:4326
     ):
-        input_dataset = gdal.Open(self.path, gdal.GA_ReadOnly)
+        self.dataset = gdal.Open(self.path, gdal.GA_ReadOnly)
+        input_dataset = self.dataset
         input_srs = input_dataset.GetProjectionRef()
         target_srs = osr.SpatialReference()
         target_srs.SetFromUserInput(target_crs)
@@ -54,4 +54,3 @@ class GDAL:
         )
         input_dataset = None
         output_dataset = None
-    
